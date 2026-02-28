@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        h1{
+            text-align: center;
+        }
+        .add{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-left: 30%;
+            padding: 10px;
+            height: 400px;
+            width:  450px;
+            background-color: brown;
+            margin-top: 10px;
+            border-radius: 10px;
+            box-shadow: 5px 5px 10px;
+        }
+        input{
+            padding: 15px 23px;
+            margin: 10px;
+            border-radius: 10px;
+            border-color: black;
+        }
+        #adding{
+            margin: 10px 0px;
+            padding: 10px 5px;
+            border: solid;
+            border-radius: 10px;
+        }
+        #msg{
+            padding: 15px;
+            font-size: larger;
+            width:100px;
+        }
+        .searching{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: antiquewhite;
+            width:  450px;
+            margin-left: 30%;
+            border-radius: 10px;
+            height: 300px;
+
+        }
+        #ntg{
+            padding: 10px;
+            border-radius: 10px;
+            border: solid;
+        }
+        #student-deatiles{
+            padding: 10px;
+            background-color: lightblue;
+            margin-top: 10px;
+            border-radius: 10px;
+            width: 250px;
+            height: 150px;
+            text-align: center;
+        }
+        h2{
+            margin: 5px;
+        }
+        h3{
+            margin: 10px;
+        }
+        .del{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: aqua;
+            width:  450px;
+            margin-left: 30%;
+            border-radius: 10px;
+            height: 300px;
+        }
+        #delte{
+            padding: 15px;
+            border-radius: 10px;
+        }
+        #delmsg{
+            margin-top: 10px;
+            font-size: larger;
+        }
+    </style>
+</head>
+<body>
+    <h1>Student Mangaement portel</h1>
+    <div class="add">
+        <input type="text" id="sid" placeholder="Enter id"/>
+        <input type="text" id="sname" placeholder="Enter name"/>
+        <input type="email" id="semail" placeholder="Enter email"/>
+        <input type="text" id="scourse" placeholder="Enter course"/>
+        <button onclick="addstudent()" id="adding">Add Student</button>
+        <p id="msg"></p>
+    </div>
+    <div class="searching">
+        <input type="text" id="serachid" placeholder="Enter Student Id"/>
+        <button onclick="search()" id="ntg">Search</button>
+        <div id="student-deatiles">
+            
+        </div>
+    </div>
+    <div class="del">
+        <input type="text" id="delt"  placeholder="Enter Student Id"/>
+        <button onclick="deletee()" id="delte">Delete</button>
+        <p id="delmsg"></p>
+    </div>
+    <script>
+        const API="http://localhost:8080";
+        function addstudent(){
+            let student={id:document.getElementById("sid").value,
+                name:document.getElementById("sname").value,
+                email:document.getElementById("semail").value,
+                section:document.getElementById("scourse").value
+            };
+            fetch(API,{
+                method:"POST",
+                headers:{"Content-Type":
+                    "application/json"
+                },
+                body:JSON.stringify(student)
+            })
+            .then(res=>res.text())
+            .then(data=>{
+                document.getElementById("msg").innerText="ADD SUCCESSFULLY";
+            });
+            document.getElementById("sid").value="";
+            document.getElementById("sname").value="";
+            document.getElementById("semail").value="";
+            document.getElementById("scourse").value="";
+        }
+        function search(){
+            let inputt=document.getElementById("serachid");
+            let id=inputt.value;
+            fetch(`${API}/${id}`)
+            .then(res=>res.json())
+            .then(data=>{
+                 document.getElementById("student-deatiles").innerHTML=
+                 `<h3>Student Deatails</h3>
+                 <p><b>ID:</b>${data.id}</p>
+                 <p><b>NAME:</b>${data.name}</p>
+                 <p><b>EMAIL:</b>${data.email}</p>
+                 <p><b>COURSE:</b>${data.section}</p>
+                 `
+            })
+            .catch(()=>{
+                document.getElementById("student-deatiles").innerHTML=`<p style=color:red>STUDENT NOT FOUND</p>`
+            });
+        }
+        function deletee(){
+            let inputt=document.getElementById("delt");
+           let id= inputt.value;
+            fetch(`${API}/${id}`,{
+                method:"DELETE",
+            })
+            .then(res=>res.text())
+            .then(data=>{
+                console.log(data);
+                alert("DELETED SUCCESSFULLY");
+            });
+            inputt.value="";
+        }
+         </script>
+</body>
+</html>
